@@ -3,7 +3,7 @@ package zhttp.service
 import io.netty.buffer.{Unpooled => JUnpooled}
 import io.netty.handler.codec.http.{HttpHeaderNames => JHttpHeaderNames, HttpVersion => JHttpVersion}
 import zhttp.core.{JDefaultFullHttpRequest, JFullHttpRequest}
-import zhttp.http.{HTTP_CHARSET, Header, Request, Root}
+import zhttp.http.{HTTP_CHARSET, Header, Request, Root, URL}
 trait EncodeRequest {
 
   /**
@@ -13,7 +13,7 @@ trait EncodeRequest {
     val method      = req.method.asJHttpMethod
     val uri         = req.url.path match {
       case Root => "/"
-      case path => path.asString
+      case _    => URL(req.url.path, URL.Location.Relative, req.url.queryParams).asString
     }
     val content     = req.getBodyAsString match {
       case Some(text) => JUnpooled.copiedBuffer(text, HTTP_CHARSET)
